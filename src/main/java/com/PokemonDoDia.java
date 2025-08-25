@@ -21,6 +21,7 @@ public class PokemonDoDia {
         int id2 = random.nextInt(TOTAL_POKEMONS) + 1;
 
         try {
+ feat/compare-pokemon
             JsonObject pokemon1 = buscarPokemon(client, id1);
             JsonObject pokemon2 = buscarPokemon(client, id2);
 
@@ -29,11 +30,45 @@ public class PokemonDoDia {
                 exibirPokemon(pokemon2, id2);
 
                 compararPokemons(pokemon1, id1, pokemon2, id2);
+=======
+            Request request = new Request.Builder()
+                    .url(BASE_URL + id)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful() && response.body() != null) {
+                String body = response.body().string();
+                JsonObject json = JsonParser.parseString(body).getAsJsonObject();
+
+                String name = json.get("name").getAsString();
+                int height = json.get("height").getAsInt();
+                int weight = json.get("weight").getAsInt();
+                String type = json.getAsJsonArray("types")
+                        .get(0).getAsJsonObject()
+                        .getAsJsonObject("type")
+                        .get("name").getAsString();
+
+        
+
+               
+                String resultado = String.format(
+                        "=== POKÉMON DO DIA ===\n" +
+                        "ID: %d\nNome: %s\nTipo: %s\nAltura: %d\nPeso: %d\nHabilidade: %s\nForça: %d",
+                        id, name, type, height, weight, ability, forca
+                );
+
+                System.out.println(resultado);
+
+            } else {
+                System.out.println("Não foi possível buscar o Pokémon (status: " + response.code() + ")");
+ main
             }
         } catch (IOException e) {
             System.out.println("Erro na requisição: " + e.getMessage());
         }
     }
+ feat/compare-pokemon
 
     private static JsonObject buscarPokemon(OkHttpClient client, int id) throws IOException {
         Request request = new Request.Builder()
@@ -92,3 +127,8 @@ public class PokemonDoDia {
         return (height * weight) / 10;
     }
 }
+
+  
+  =======
+}
+ main
