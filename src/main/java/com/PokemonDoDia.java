@@ -39,15 +39,9 @@ public class PokemonDoDia {
                         .getAsJsonObject("type")
                         .get("name").getAsString();
 
-                // Nova funcionalidade: primeira habilidade
-                String ability = json.getAsJsonArray("abilities")
-                        .get(0).getAsJsonObject()
-                        .getAsJsonObject("ability")
-                        .get("name").getAsString();
+        
 
-                // Calcular força do Pokémon
-                int forca = (height * weight) / 10;
-
+               
                 String resultado = String.format(
                         "=== POKÉMON DO DIA ===\n" +
                         "ID: %d\nNome: %s\nTipo: %s\nAltura: %d\nPeso: %d\nHabilidade: %s\nForça: %d",
