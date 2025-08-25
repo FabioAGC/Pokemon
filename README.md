@@ -27,6 +27,7 @@ pokemon-do-dia/
 1. Clone ou extraia o projeto.
 2. Abra um terminal na pasta raiz do projeto.
 3. Compile e gere o `.jar`:
+4. mvn clean package no mavem
  
 ## Historico de mudanças
 1. codigo inicial funcionando
@@ -35,5 +36,3 @@ pokemon-do-dia/
 4. removi a funcão de comparação que nao estava funcionando
 
    
-```bash
-mvn clean package
