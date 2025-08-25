@@ -1,7 +1,7 @@
 # Pokémon do Dia
 
 Um pequeno projeto Java que sorteia um Pokémon aleatório usando a [PokéAPI](https://pokeapi.co) 
----
+
 
 ## 📦 Tecnologias e Dependências
 
@@ -11,7 +11,6 @@ Um pequeno projeto Java que sorteia um Pokémon aleatório usando a [PokéAPI](h
   - [OkHttp](https://square.github.io/okhttp/) → para requisições HTTP
   - [Gson](https://github.com/google/gson) → para parsear JSON
 
----
 
 ## 📂 Estrutura do Projeto
 
@@ -22,7 +21,6 @@ pokemon-do-dia/
 ├── pom.xml
 └── .gitignore
 
----
 
 ## ⚙️ Como Rodar
 
