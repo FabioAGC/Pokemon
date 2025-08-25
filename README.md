@@ -33,6 +33,6 @@ pokemon-do-dia/
 1. codigo inicial funcionando
 2. leticia adicionou uma função de habilidades
 3. conflito : eu adicionei uma nova função de comparação , e a leticia ainda nao tinha ela no codigo que ela estava alterando , o conflitos se resolveu no review de conflitos do github
-4. removi a funcão de comparação que nao estava funcionando
+4. removi a funcão de comparação e força que nao estavam funcionando
 
    
