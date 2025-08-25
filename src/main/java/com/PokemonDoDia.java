@@ -40,10 +40,16 @@ public class PokemonDoDia {
                         .getAsJsonObject("type")
                         .get("name").getAsString();
 
+                // Nova funcionalidade: primeira habilidade
+                String ability = json.getAsJsonArray("abilities")
+                        .get(0).getAsJsonObject()
+                        .getAsJsonObject("ability")
+                        .get("name").getAsString();
+
                 String resultado = String.format(
                         "=== POKÉMON DO DIA ===\n" +
-                        "ID: %d\nNome: %s\nTipo: %s\nAltura: %d\nPeso: %d",
-                        id, name, type, height, weight
+                        "ID: %d\nNome: %s\nTipo: %s\nAltura: %d\nPeso: %d\nHabilidade: %s",
+                        id, name, type, height, weight, ability
                 );
 
                 System.out.println(resultado);
