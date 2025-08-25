@@ -18,7 +18,6 @@ public class PokemonDoDia {
         OkHttpClient client = new OkHttpClient();
         Random random = new Random();
 
-       
         int id = random.nextInt(TOTAL_POKEMONS) + 1;
 
         try {
@@ -46,14 +45,16 @@ public class PokemonDoDia {
                         .getAsJsonObject("ability")
                         .get("name").getAsString();
 
+                // Calcular força do Pokémon
+                int forca = (height * weight) / 10;
+
                 String resultado = String.format(
                         "=== POKÉMON DO DIA ===\n" +
-                        "ID: %d\nNome: %s\nTipo: %s\nAltura: %d\nPeso: %d\nHabilidade: %s",
-                        id, name, type, height, weight, ability
+                        "ID: %d\nNome: %s\nTipo: %s\nAltura: %d\nPeso: %d\nHabilidade: %s\nForça: %d",
+                        id, name, type, height, weight, ability, forca
                 );
 
                 System.out.println(resultado);
-
 
             } else {
                 System.out.println("Não foi possível buscar o Pokémon (status: " + response.code() + ")");
