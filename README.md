@@ -1,8 +1,6 @@
 # Pokémon do Dia
 
-Um pequeno projeto Java que sorteia um Pokémon aleatório usando a [PokéAPI](https://pokeapi.co) e exibe informações no console.  
-O resultado também é salvo no arquivo `pokemon_do_dia.txt`.
-
+Um pequeno projeto Java que sorteia um Pokémon aleatório usando a [PokéAPI](https://pokeapi.co) 
 ---
 
 ## 📦 Tecnologias e Dependências
@@ -17,13 +15,14 @@ O resultado também é salvo no arquivo `pokemon_do_dia.txt`.
 
 ## 📂 Estrutura do Projeto
 
----
 
 pokemon-do-dia/
 ├── src/
-│ └── main/java/com/exemplo/PokemonDoDia.java
+│ └── main/java/com/PokemonDoDia.java
 ├── pom.xml
 └── .gitignore
+
+---
 
 ## ⚙️ Como Rodar
 
