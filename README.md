@@ -12,9 +12,10 @@ Um pequeno projeto Java que sorteia um Pokémon aleatório usando a [PokéAPI](h
   - [Gson](https://github.com/google/gson) → para parsear JSON
 
 
+
 ## 📂 Estrutura do Projeto
 
-
+```text
 src
  ├─ main
  │   └─ java
@@ -22,7 +23,7 @@ src
  └─ test
      └─ java
          └─ com/exemplo/PokemonDoDiaTest.java
-
+```
 
 ## ⚙️ Como Rodar
 
