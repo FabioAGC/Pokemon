@@ -15,11 +15,13 @@ Um pequeno projeto Java que sorteia um Pokémon aleatório usando a [PokéAPI](h
 ## 📂 Estrutura do Projeto
 
 
-pokemon-do-dia/
-├── src/
-│ └── main/java/com/com.example.PokemonDoDia.java
-├── pom.xml
-└── .gitignore
+src
+ ├─ main
+ │   └─ java
+ │       └─ com/exemplo/PokemonDoDia.java
+ └─ test
+     └─ java
+         └─ com/exemplo/PokemonDoDiaTest.java
 
 
 ## ⚙️ Como Rodar
