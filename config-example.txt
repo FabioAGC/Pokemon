@@ -1,0 +1,31 @@
+# Exemplo de configuração de variáveis de ambiente para o sistema de CI/CD
+# Configure estas variáveis como secrets no GitHub Actions
+
+# Email de notificação (obrigatório)
+NOTIFICATION_EMAIL=seu-email@exemplo.com
+
+# Configurações do servidor SMTP (obrigatório)
+SENDER_EMAIL=seu-email@gmail.com
+SENDER_PASSWORD=sua-senha-de-app-do-gmail
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+
+# Configurações opcionais
+POM_VERSION=2.0.0
+TEST_COUNT=32
+TEST_PASSED=32
+TEST_FAILED=0
+TEST_STATUS=SUCCESS
+BUILD_STATUS=SUCCESS
+
+# Para usar com Gmail:
+# 1. Ative a verificação em duas etapas
+# 2. Gere uma senha de app específica
+# 3. Use essa senha como SENDER_PASSWORD
+
+# Para usar com outros provedores:
+# Outlook: smtp-mail.outlook.com:587
+# Yahoo: smtp.mail.yahoo.com:587
+# Custom SMTP: seu-servidor-smtp.com:587
+
+

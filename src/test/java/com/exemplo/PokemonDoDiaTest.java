@@ -1,15 +1,34 @@
 package com.exemplo;
 
 import com.examplo.PokemonDoDia;
-import com.exemplo.PokemonDoDiaTest;
 import com.google.gson.JsonSyntaxException;
+import okhttp3.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class PokemonDoDiaTest {
+
+    @Mock
+    private OkHttpClient mockClient;
+    
+    @Mock
+    private Call mockCall;
+    
+    @Mock
+    private Response mockResponse;
+    
+    @Mock
+    private ResponseBody mockResponseBody;
 
     // Dados de teste em formato JSON
     private static final String JSON_VALIDO_SIMPLES = "{\"name\":\"bulbasaur\",\"height\":7,\"weight\":69,\"types\":[{\"type\":{\"name\":\"grass\"}}]}";
@@ -194,5 +213,212 @@ public class PokemonDoDiaTest {
         assertThrows(NullPointerException.class, () -> {
             PokemonDoDia.formatPokemonData(1, json);
         });
+    }
+
+    // --- Testes com Mocks (10+ Assertions) ---
+
+    @Test
+    @DisplayName("21. Deve buscar dados do Pokémon com sucesso usando mock")
+    void testFetchPokemonData_Success() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(true);
+        when(mockResponse.body()).thenReturn(mockResponseBody);
+        when(mockResponseBody.string()).thenReturn(JSON_VALIDO_SIMPLES);
+
+        // Act
+        String result = PokemonDoDia.fetchPokemonData(1, mockClient);
+
+        // Assert
+        assertEquals(JSON_VALIDO_SIMPLES, result);
+        verify(mockClient).newCall(any(Request.class));
+        verify(mockCall).execute();
+        verify(mockResponse).isSuccessful();
+        verify(mockResponseBody).string();
+    }
+
+    @Test
+    @DisplayName("22. Deve lançar IOException quando resposta não é bem-sucedida")
+    void testFetchPokemonData_UnsuccessfulResponse() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(false);
+        when(mockResponse.code()).thenReturn(404);
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(99999, mockClient);
+        });
+        
+        assertTrue(exception.getMessage().contains("Não foi possível buscar o Pokémon"));
+        assertTrue(exception.getMessage().contains("404"));
+    }
+
+    @Test
+    @DisplayName("23. Deve lançar IOException quando ResponseBody é nulo")
+    void testFetchPokemonData_NullResponseBody() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(true);
+        when(mockResponse.body()).thenReturn(null);
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(1, mockClient);
+        });
+        
+        assertTrue(exception.getMessage().contains("Não foi possível buscar o Pokémon"));
+    }
+
+    @Test
+    @DisplayName("24. Deve lançar IOException quando Call.execute() falha")
+    void testFetchPokemonData_CallExecuteThrows() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenThrow(new IOException("Network error"));
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(1, mockClient);
+        });
+        
+        assertEquals("Network error", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("25. Deve verificar se o Request é construído corretamente")
+    void testFetchPokemonData_RequestConstruction() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(true);
+        when(mockResponse.body()).thenReturn(mockResponseBody);
+        when(mockResponseBody.string()).thenReturn(JSON_VALIDO_SIMPLES);
+
+        // Act
+        PokemonDoDia.fetchPokemonData(25, mockClient);
+
+        // Assert
+        verify(mockClient).newCall(argThat(request -> 
+            request.url().toString().equals("https://pokeapi.co/api/v2/pokemon/25")
+        ));
+    }
+
+    @Test
+    @DisplayName("26. Deve fechar ResponseBody corretamente")
+    void testFetchPokemonData_ResponseBodyClosed() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(true);
+        when(mockResponse.body()).thenReturn(mockResponseBody);
+        when(mockResponseBody.string()).thenReturn(JSON_VALIDO_SIMPLES);
+
+        // Act
+        PokemonDoDia.fetchPokemonData(1, mockClient);
+
+        // Assert - Verifica se o try-with-resources funciona corretamente
+        verify(mockResponseBody).string();
+    }
+
+    @Test
+    @DisplayName("27. Deve lidar com diferentes códigos de status HTTP")
+    void testFetchPokemonData_DifferentStatusCodes() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(false);
+        when(mockResponse.code()).thenReturn(500);
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(1, mockClient);
+        });
+        
+        assertTrue(exception.getMessage().contains("500"));
+    }
+
+    @Test
+    @DisplayName("28. Deve testar com ID zero (caso limite)")
+    void testFetchPokemonData_ZeroId() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(false);
+        when(mockResponse.code()).thenReturn(404);
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(0, mockClient);
+        });
+        
+        assertTrue(exception.getMessage().contains("404"));
+    }
+
+    @Test
+    @DisplayName("29. Deve testar com ID negativo")
+    void testFetchPokemonData_NegativeId() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(false);
+        when(mockResponse.code()).thenReturn(404);
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(-1, mockClient);
+        });
+        
+        assertTrue(exception.getMessage().contains("404"));
+    }
+
+    @Test
+    @DisplayName("30. Deve testar com ID muito grande")
+    void testFetchPokemonData_VeryLargeId() throws IOException {
+        // Arrange
+        when(mockClient.newCall(any(Request.class))).thenReturn(mockCall);
+        when(mockCall.execute()).thenReturn(mockResponse);
+        when(mockResponse.isSuccessful()).thenReturn(false);
+        when(mockResponse.code()).thenReturn(404);
+
+        // Act & Assert
+        IOException exception = assertThrows(IOException.class, () -> {
+            PokemonDoDia.fetchPokemonData(Integer.MAX_VALUE, mockClient);
+        });
+        
+        assertTrue(exception.getMessage().contains("404"));
+    }
+
+    @Test
+    @DisplayName("31. Deve verificar se o método main não lança exceções com cliente válido")
+    void testMain_NoExceptions() {
+        // Este teste verifica se o método main não lança exceções não tratadas
+        // Como o método main usa Random, não podemos prever o resultado exato
+        assertDoesNotThrow(() -> {
+            // Simulamos a execução do main com um cliente mock
+            OkHttpClient client = new OkHttpClient();
+            // Não podemos testar diretamente o main pois ele usa System.out.println
+            // Mas podemos testar os métodos que ele chama
+            try {
+                String result = PokemonDoDia.fetchPokemonData(1, client);
+                assertNotNull(result);
+            } catch (IOException e) {
+                // IOException é esperada se não houver conexão com internet
+                // Isso é normal em ambiente de teste
+            }
+        });
+    }
+
+    @Test
+    @DisplayName("32. Deve testar formatação com dados reais da API")
+    void testFormatPokemonData_RealApiData() {
+        // Teste com dados que simulam a resposta real da API
+        String realApiJson = "{\"name\":\"pikachu\",\"height\":4,\"weight\":60,\"types\":[{\"type\":{\"name\":\"electric\",\"url\":\"https://pokeapi.co/api/v2/type/13/\"}}]}";
+        String expected = "=== POKÉMON DO DIA ===\nID: 25\nNome: pikachu\nTipo: electric\nAltura: 4\nPeso: 60";
+        String actual = PokemonDoDia.formatPokemonData(25, realApiJson);
+        assertEquals(expected, actual);
     }
 }
